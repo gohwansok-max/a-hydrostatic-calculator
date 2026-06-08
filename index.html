@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>가수량(물 추가량) 계산기</title>
+    <style>
+        body { 
+            font-family: 'Malgun Gothic', sans-serif; 
+            padding: 20px; 
+            max-width: 450px; 
+            margin: auto; 
+            background-color: #f9f9f9;
+        }
+        .calculator-card {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h2 { text-align: center; color: #333; margin-top: 0; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+        input { 
+            width: 100%; 
+            padding: 10px; 
+            box-sizing: border-box; 
+            border: 1px solid #ccc; 
+            border-radius: 5px; 
+            font-size: 16px;
+        }
+        button { 
+            width: 100%; 
+            padding: 12px; 
+            background-color: #0056b3; 
+            color: white; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        button:hover { background-color: #004494; }
+        .result { 
+            margin-top: 20px; 
+            padding: 15px; 
+            background-color: #e9ecef; 
+            border-radius: 5px; 
+            text-align: center; 
+            font-size: 18px; 
+            font-weight: bold; 
+            color: #333;
+        }
+        .formula-text {
+            font-size: 13px;
+            color: #666;
+            margin-top: 10px;
+            font-weight: normal;
+        }
+    </style>
+</head>
+<body>
+
+<div class="calculator-card">
+    <h2>💧 가수량 계산기</h2>
+
+    <div class="input-group">
+        <label>실제 당도 (현재 Brix)</label>
+        <input type="number" id="actualBrix" step="0.01" placeholder="예: 21.27">
+    </div>
+    
+    <div class="input-group">
+        <label>기준 당도 (목표 Brix)</label>
+        <input type="number" id="targetBrix" step="0.01" placeholder="예: 19.8">
+    </div>
+    
+    <div class="input-group">
+        <label>현재 배합액 잔량 (kg)</label>
+        <input type="number" id="currentMass" step="0.01" placeholder="예: 500">
+    </div>
+
+    <button onclick="calculateWater()">계산하기 (x 구하기)</button>
+
+    <div class="result" id="resultArea">
+        결과가 이곳에 표시됩니다.
+    </div>
+</div>
+
+<script>
+    function calculateWater() {
+        // 입력값 가져오기
+        var actualBrix = parseFloat(document.getElementById('actualBrix').value);
+        var targetBrix = parseFloat(document.getElementById('targetBrix').value);
+        var currentMass = parseFloat(document.getElementById('currentMass').value);
+
+        // 입력값 검증
+        if(isNaN(actualBrix) || isNaN(targetBrix) || isNaN(currentMass)) {
+            alert("모든 값을 숫자로 정확히 입력해주세요.");
+            return;
+        }
+
+        if(actualBrix <= targetBrix) {
+            alert("실제 당도가 기준 당도보다 높아야 물을 추가하여 당도를 낮출 수 있습니다.");
+            return;
+        }
+
+        // 공식 계산
+        // 기준당도 : 현재잔량 = (실제당도 - 기준당도) : x
+        var diff = actualBrix - targetBrix;
+        var waterToAdd = (currentMass * diff) / targetBrix;
+
+        // 결과 출력
+        var resultHtml = "추가할 물의 양 (x): <br><span style='color:#d9534f; font-size: 26px;'>" + waterToAdd.toFixed(2) + " kg</span>";
+        resultHtml += "<div class='formula-text'>적용된 공식: " + targetBrix + " : " + currentMass + " = " + diff.toFixed(2) + " : x <br>(x = " + (currentMass * diff).toFixed(2) + " ÷ " + targetBrix + ")</div>";
+        
+        document.getElementById('resultArea').innerHTML = resultHtml;
+    }
+</script>
+
+</body>
+</html>
