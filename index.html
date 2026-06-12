@@ -2,60 +2,262 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>가수량(물 추가량) 계산기</title>
     <style>
-        body { 
-            font-family: 'Malgun Gothic', sans-serif; 
-            padding: 20px; 
-            max-width: 450px; 
-            margin: auto; 
-            background-color: #f9f9f9;
+        * {
+            box-sizing: border-box;
         }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+            padding: 12px;
+            background-color: #f9f9f9;
+            color: #333;
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
         .calculator-card {
             background-color: white;
-            padding: 25px;
+            padding: 18px;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
-        h2 { text-align: center; color: #333; margin-top: 0; }
-        .input-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
-        input { 
-            width: 100%; 
-            padding: 10px; 
-            box-sizing: border-box; 
-            border: 1px solid #ccc; 
-            border-radius: 5px; 
-            font-size: 16px;
-        }
-        button { 
-            width: 100%; 
-            padding: 12px; 
-            background-color: #0056b3; 
-            color: white; 
-            border: none; 
-            border-radius: 5px; 
-            cursor: pointer; 
-            font-size: 16px; 
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        button:hover { background-color: #004494; }
-        .result { 
-            margin-top: 20px; 
-            padding: 15px; 
-            background-color: #e9ecef; 
-            border-radius: 5px; 
-            text-align: center; 
-            font-size: 18px; 
-            font-weight: bold; 
+
+        h2 {
+            text-align: center;
             color: #333;
+            margin: 0 0 24px 0;
+            font-size: 1.6rem;
+            line-height: 1.3;
         }
+
+        /* ===== Input Group ===== */
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 12px;
+            border: 1.5px solid #ccc;
+            border-radius: 6px;
+            font-size: 1.05rem;
+            box-sizing: border-box;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            -webkit-appearance: none;
+            appearance: none;
+            background-color: #fff;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #0056b3;
+            box-shadow: 0 0 8px rgba(0, 86, 179, 0.35);
+        }
+
+        /* iOS 스핀 버튼 제거 */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"]::-moz-number-spin-button {
+            display: none;
+        }
+
+        /* ===== Button ===== */
+        button {
+            width: 100%;
+            padding: 16px 14px;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-top: 12px;
+            transition: background-color 0.3s, transform 0.1s;
+            -webkit-appearance: none;
+            appearance: none;
+            min-height: 50px;
+            line-height: 1.4;
+        }
+
+        button:hover {
+            background-color: #004494;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        /* ===== Result Box ===== */
+        .result {
+            margin-top: 24px;
+            padding: 20px;
+            background-color: #e8f5e9;
+            border-left: 5px solid #4caf50;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #333;
+            display: none;
+        }
+
+        .result.active {
+            display: block;
+        }
+
+        /* ===== Formula Text ===== */
         .formula-text {
-            font-size: 13px;
+            font-size: 0.9rem;
             color: #666;
-            margin-top: 10px;
+            margin-top: 12px;
             font-weight: normal;
+            line-height: 1.6;
+            word-break: break-word;
+        }
+
+        .result-value {
+            font-size: 2.4rem;
+            color: #2e7d32;
+            font-weight: bold;
+            margin: 12px 0;
+            line-height: 1.2;
+            word-break: break-word;
+        }
+
+        /* ===== Tablet & Desktop ===== */
+        @media (min-width: 768px) {
+            body {
+                padding: 20px;
+            }
+
+            .calculator-card {
+                padding: 25px;
+                max-width: 500px;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+                margin-bottom: 25px;
+            }
+
+            label {
+                font-size: 0.95rem;
+                margin-bottom: 6px;
+            }
+
+            input {
+                padding: 11px 12px;
+                font-size: 1rem;
+                border: 1px solid #ccc;
+            }
+
+            button {
+                padding: 13px 14px;
+                font-size: 1rem;
+                min-height: auto;
+            }
+
+            .result {
+                padding: 15px;
+                font-size: 1rem;
+                border-left: 4px solid;
+                margin-top: 20px;
+            }
+
+            .result-value {
+                font-size: 2.2rem;
+            }
+
+            .formula-text {
+                font-size: 0.85rem;
+                margin-top: 10px;
+            }
+        }
+
+        /* ===== 아주 작은 스마트폰 (240px ~ 320px) ===== */
+        @media (max-width: 320px) {
+            body {
+                padding: 8px;
+            }
+
+            .calculator-card {
+                padding: 14px;
+            }
+
+            h2 {
+                font-size: 1.3rem;
+                margin-bottom: 18px;
+            }
+
+            .input-group {
+                margin-bottom: 16px;
+            }
+
+            label {
+                font-size: 0.9rem;
+                margin-bottom: 6px;
+            }
+
+            input {
+                padding: 12px 10px;
+                font-size: 16px;
+            }
+
+            button {
+                padding: 14px 10px;
+                font-size: 1rem;
+                min-height: 45px;
+                margin-top: 8px;
+            }
+
+            .result {
+                padding: 16px;
+                margin-top: 18px;
+            }
+
+            .result-value {
+                font-size: 2rem;
+                margin: 8px 0;
+            }
+
+            .formula-text {
+                font-size: 0.8rem;
+                margin-top: 10px;
+            }
         }
     </style>
 </head>
@@ -65,24 +267,26 @@
     <h2>💧 가수량 계산기</h2>
 
     <div class="input-group">
-        <label>실제 당도 (현재 Brix)</label>
-        <input type="number" id="actualBrix" step="0.01" placeholder="예: 21.27">
+        <label for="actualBrix">실제 당도 (현재 Brix)</label>
+        <input type="number" id="actualBrix" step="0.01" placeholder="예: 21.27" inputmode="decimal">
     </div>
-    
+
     <div class="input-group">
-        <label>기준 당도 (목표 Brix)</label>
-        <input type="number" id="targetBrix" step="0.01" placeholder="예: 19.8">
+        <label for="targetBrix">기준 당도 (목표 Brix)</label>
+        <input type="number" id="targetBrix" step="0.01" placeholder="예: 19.8" inputmode="decimal">
     </div>
-    
+
     <div class="input-group">
-        <label>현재 배합액 잔량 (kg)</label>
-        <input type="number" id="currentMass" step="0.01" placeholder="예: 500">
+        <label for="currentMass">현재 배합액 잔량 (kg)</label>
+        <input type="number" id="currentMass" step="0.01" placeholder="예: 500" inputmode="decimal">
     </div>
 
     <button onclick="calculateWater()">계산하기 (x 구하기)</button>
 
     <div class="result" id="resultArea">
-        결과가 이곳에 표시됩니다.
+        <div style="margin-bottom: 8px;">추가할 물의 양 (x)</div>
+        <div class="result-value" id="resultValue">0.00 kg</div>
+        <div class="formula-text" id="formulaDisplay"></div>
     </div>
 </div>
 
@@ -100,7 +304,7 @@
         }
 
         if(actualBrix <= targetBrix) {
-            alert("실제 당도가 기준 당도보다 높아야 물을 추가하여 당도를 낮출 수 있습니다.");
+            alert("실제 당도가 기준 당도보다 높아야 물을 추가하여 당도를 �낮출 수 있습니다.");
             return;
         }
 
@@ -109,12 +313,32 @@
         var diff = actualBrix - targetBrix;
         var waterToAdd = (currentMass * diff) / targetBrix;
 
-        // 결과 출력
-        var resultHtml = "추가할 물의 양 (x): <br><span style='color:#d9534f; font-size: 26px;'>" + waterToAdd.toFixed(2) + " kg</span>";
-        resultHtml += "<div class='formula-text'>적용된 공식: " + targetBrix + " : " + currentMass + " = " + diff.toFixed(2) + " : x <br>(x = " + (currentMass * diff).toFixed(2) + " ÷ " + targetBrix + ")</div>";
-        
-        document.getElementById('resultArea').innerHTML = resultHtml;
+        // 결과 표시
+        var resultArea = document.getElementById('resultArea');
+        var resultValue = document.getElementById('resultValue');
+        var formulaDisplay = document.getElementById('formulaDisplay');
+
+        resultValue.innerHTML = waterToAdd.toFixed(2) + " <span style='font-size: 0.9em;'>kg</span>";
+        formulaDisplay.innerHTML = "적용된 공식: " + targetBrix + " : " + currentMass + " = " + diff.toFixed(2) + " : x<br>(x = " + (currentMass * diff).toFixed(2) + " ÷ " + targetBrix + ")";
+
+        resultArea.classList.add('active');
+
+        // 화면 스크롤
+        setTimeout(function() {
+            resultArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
     }
+
+    // 엔터키 입력으로도 계산 가능
+    document.getElementById('actualBrix').addEventListener('keypress', function(e) {
+        if(e.key === 'Enter') calculateWater();
+    });
+    document.getElementById('targetBrix').addEventListener('keypress', function(e) {
+        if(e.key === 'Enter') calculateWater();
+    });
+    document.getElementById('currentMass').addEventListener('keypress', function(e) {
+        if(e.key === 'Enter') calculateWater();
+    });
 </script>
 
 </body>
